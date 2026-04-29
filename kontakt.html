@@ -228,15 +228,9 @@ body { background:var(--ink);color:var(--paper);overflow:hidden; }
     overflow:hidden;
   }
 
-  body.menu-open::after {
-    content:'';
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.4);
-    backdrop-filter:blur(2px);
-    z-index:200;
-    pointer-events:none;
-  }
+ body.menu-open::after {
+  pointer-events: none;
+}
 }
 
   
