@@ -190,7 +190,24 @@ body { background:var(--ink);color:var(--paper);overflow:hidden; }
 <div id="cur-ring"></div>
 <div id="overlay"></div>
 <div id="toast">✓ Hvala! Javit ćemo vam se uskoro.</div>
-<nav><a href="index.html" class="nav-logo" data-page><b>KR-IL</b> Epoxy Podovi</a><ul class="nav-links"><li><a href="index.html" class="" data-page>Početna</a></li><li><a href="usluge.html" class="" data-page>Usluge</a></li><li><a href="zastomi.html" class="" data-page>Zašto mi</a></li><li><a href="proces.html" class="" data-page>Proces</a></li><li><a href="materijali.html" class="" data-page>Materijali</a></li><li><a href="kontakt.html" class="act nav-cta" data-page><span>Kontakt</span></a></li></ul></nav>
+<nav>
+  <a href="index.html" class="nav-logo"><b>KR-IL</b> Epoxy Podovi</a>
+
+  <button class="nav-toggle" id="navToggle" aria-label="Izbornik">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Početna</a></li>
+    <li><a href="usluge.html">Usluge</a></li>
+    <li><a href="zastomi.html">Zašto mi</a></li>
+    <li><a href="proces.html">Proces</a></li>
+    <li><a href="materijali.html">Materijali</a></li>
+    <li><a href="kontakt.html" class="nav-cta"><span>Kontakt</span></a></li>
+  </ul>
+</nav>
 <div id="side-nav"><div class="sn-dot" data-label="Početna" onclick="navigate('index.html')"></div><div class="sn-dot" data-label="Usluge" onclick="navigate('usluge.html')"></div><div class="sn-dot" data-label="Zašto mi" onclick="navigate('zastomi.html')"></div><div class="sn-dot" data-label="Proces" onclick="navigate('proces.html')"></div><div class="sn-dot" data-label="Materijali" onclick="navigate('materijali.html')"></div><div class="sn-dot act" data-label="Kontakt" onclick="navigate('kontakt.html')"></div></div>
 
 <div class="page">
@@ -316,6 +333,14 @@ document.getElementById('send-btn').addEventListener('click',function(e){
   this.appendChild(r);setTimeout(()=>r.remove(),700);
   const toast=document.getElementById('toast');
   toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),4500);
+});
+  const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  navToggle.classList.toggle('open');
+  document.body.classList.toggle('menu-open', open);
 });
 
 </script>
