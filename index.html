@@ -458,6 +458,15 @@ function scramble(w){ let it=0;const iv=setInterval(()=>{ swEl.textContent=w.spl
 setInterval(()=>{ wi=(wi+1)%words.length;scramble(words[wi]); },3400);
 setTimeout(()=>{ document.querySelectorAll('[data-count]').forEach(el=>{ const tgt=parseInt(el.dataset.count),sfx=el.dataset.sfx||'';const dur=1600,t0=performance.now();(function tick(now){const p=Math.min((now-t0)/dur,1),e2=1-Math.pow(1-p,3),v=Math.floor(e2*tgt);el.textContent=(tgt>=1000?v.toLocaleString('hr'):v)+sfx;if(p<1)requestAnimationFrame(tick);else el.textContent=(tgt>=1000?tgt.toLocaleString('hr'):tgt)+sfx;})(t0); }); },500);
 
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  navToggle.classList.toggle('open');
+  document.body.classList.toggle('menu-open', open);
+});
+  
 </script>
 </body>
 </html>
