@@ -146,10 +146,7 @@ nav {
   body { overflow:auto; }
   nav ul { gap:16px; }
 }
-@media(max-width:600px) {
-  nav ul { display:none; }
-  .page { padding:80px 5vw 40px; }
-}
+
 
 
 body { background:var(--ink);color:var(--paper);overflow:hidden; }
@@ -318,7 +315,8 @@ document.getElementById('send-btn').addEventListener('click',function(e){
   const toast=document.getElementById('toast');
   toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),4500);
 });
-  const navToggle = document.getElementById('navToggle');
+  
+const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 
 navToggle.addEventListener('click', () => {
