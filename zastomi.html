@@ -387,6 +387,17 @@ wbg.closest('.why-l').addEventListener('mousemove',e=>{
 });
 wbg.closest('.why-l').addEventListener('mouseleave',()=>wbg.style.transform='');
 
+ 
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  navToggle.classList.toggle('open');
+  document.body.classList.toggle('menu-open', open);
+});
+
+
 </script>
 </body>
 </html>
