@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KR-IL — Usluge</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0d0d0d; --paper: #f5f2ed; --warm: #e8e2d9;
+  --accent: #c8a96e; --accent-dark: #a07840; --steel: #4a5568;
+}
+html, body { width: 100%; height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper); color: var(--ink);
+  font-size: 17px; line-height: 1.6;
+  cursor: none; overflow: hidden;
+}
+/* CURSOR */
+#cur { width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .22s,height .22s,background .22s; }
+#cur-ring { width:34px;height:34px;border:1.5px solid rgba(200,169,110,.5);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .28s,height .28s,border-color .28s; }
+body.ch #cur { width:15px;height:15px;background:var(--accent-dark); }
+body.ch #cur-ring { width:54px;height:54px;border-color:rgba(200,169,110,.9); }
+body.cc #cur { transform:translate(-50%,-50%) scale(.65); }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 6vw;
+  background: rgba(245,242,237,.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(200,169,110,.15);
+}
+.nav-logo { font-family:'DM Serif Display',serif; font-size:1.3rem; color:var(--ink); text-decoration:none; }
+.nav-logo b { color:var(--accent); font-weight:400; }
+.nav-links { display:flex; gap:28px; list-style:none; align-items:center; }
+.nav-links a {
+  text-decoration:none; color:var(--steel); font-size:.82rem;
+  font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+  position:relative; padding-bottom:3px; transition:color .2s;
+}
+.nav-links a::after { content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--accent);transition:width .3s; }
+.nav-links a:hover, .nav-links a.act { color:var(--accent-dark); }
+.nav-links a.act::after, .nav-links a:hover::after { width:100%; }
+.nav-cta {
+  background:var(--ink) !important; color:var(--paper) !important;
+  padding:9px 22px; border-radius:2px; overflow:hidden; position:relative;
+  transition:transform .2s !important;
+}
+.nav-cta::before { content:'';position:static;inset:0;background:var(--accent-dark);transform:translateX(-101%);transition:transform .3s ease;z-index:0; }
+.nav-cta:hover { transform:translateY(-1px) !important; }
+.nav-cta:hover::before { transform:translateX(0); }
+.nav-cta span { position:relative;z-index:1; }
+
+/* PAGE TRANSITION OVERLAY */
+#overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--ink);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+#overlay.out { animation: slideOut .55s cubic-bezier(.77,0,.18,1) forwards; }
+#overlay.in  { animation: slideIn  .55s cubic-bezier(.77,0,.18,1) forwards; }
+@keyframes slideOut { from{transform:translateX(-100%)} to{transform:translateX(0)} }
+@keyframes slideIn  { from{transform:translateX(0)} to{transform:translateX(100%)} }
+
+/* PAGE BASE */
+.page { width:100vw; height:100vh; display:flex; align-items:center; padding: 90px 6vw 0; position:relative; overflow:hidden; }
+
+/* SIDE PAGE INDICATOR */
+#side-nav {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px; z-index: 300;
+}
+.sn-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid rgba(200,169,110,.4);
+  cursor: pointer; transition: background .3s, transform .3s, border-color .3s;
+  position: relative;
+}
+.sn-dot.act { background:var(--accent); border-color:var(--accent); transform:scale(1.4); }
+.sn-dot::before {
+  content: attr(data-label);
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent); white-space: nowrap;
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.sn-dot:hover::before { opacity: 1; }
+
+/* BUTTONS */
+.btn {
+  display:inline-block;padding:15px 34px;border-radius:2px;
+  font-weight:500;font-size:.88rem;letter-spacing:.04em;
+  text-decoration:none;position:relative;overflow:hidden;
+  transition:box-shadow .25s,background .25s;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;
+}
+.btn-dark { background:var(--ink); color:var(--paper); }
+.btn-dark:hover { background:var(--accent-dark); box-shadow:0 8px 28px rgba(160,120,64,.38); }
+.btn-outline { border:1.5px solid var(--ink); color:var(--ink); background:transparent; }
+.btn-outline:hover { border-color:var(--accent-dark); color:var(--accent-dark); background:rgba(200,169,110,.06); }
+.btn-gold { background:var(--accent); color:var(--ink); }
+.btn-gold:hover { background:var(--accent-dark); color:#fff; box-shadow:0 8px 28px rgba(160,120,64,.4); }
+
+/* RIPPLE */
+.rpl { position:absolute;border-radius:50%;background:rgba(255,255,255,.22);transform:scale(0);animation:rpl .65s linear;pointer-events:none; }
+@keyframes rpl { to{transform:scale(4);opacity:0;} }
+
+/* EYEBROW */
+.eyebrow {
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.74rem;letter-spacing:.15em;text-transform:uppercase;
+  font-weight:500;margin-bottom:18px;
+}
+.eyebrow::before { content:'';width:28px;height:1px;background:currentColor; }
+
+/* SECTION TITLE */
+.sec-title { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3.5vw,3rem); line-height:1.1; letter-spacing:-.022em; }
+.sec-title em { font-style:italic; color:var(--accent); }
+
+/* ENTER ANIMATIONS */
+.fade-up { opacity:0; transform:translateY(30px); animation:fup .7s ease forwards; }
+.fade-up.d1 { animation-delay:.1s; }
+.fade-up.d2 { animation-delay:.22s; }
+.fade-up.d3 { animation-delay:.34s; }
+.fade-up.d4 { animation-delay:.46s; }
+@keyframes fup { to{opacity:1;transform:none;} }
+
+/* TOAST */
+#toast {
+  position:fixed;bottom:36px;right:36px;z-index:600;
+  background:var(--ink);color:var(--paper);padding:16px 24px;
+  border-radius:4px;border-left:4px solid var(--accent);
+  font-size:.9rem;box-shadow:0 12px 40px rgba(0,0,0,.3);
+  transform:translateY(120px);opacity:0;pointer-events:none;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+}
+#toast.show { transform:translateY(0);opacity:1; }
+
+@media(max-width:900px) {
+  body { cursor:auto; }
+  #cur,#cur-ring,#side-nav { display:none; }
+  .page { height:auto; min-height:100vh; overflow:auto; }
+  body { overflow:auto; }
+  nav ul { gap:16px; }
+}
+@media(max-width:600px) {
+  nav ul { display:none; }
+  .page { padding:80px 5vw 40px; }
+}
+
+
+body { background:var(--ink);color:var(--paper);overflow:hidden; }
+.page { flex-direction:column;justify-content:center;gap:36px;padding-top:96px; }
+.page::before { content:'USLUGE';position:absolute;right:3vw;top:50%;transform:translateY(-50%);font-family:'DM Serif Display',serif;font-size:clamp(80px,13vw,180px);color:rgba(255,255,255,.018);pointer-events:none;line-height:1; }
+
+.page-header { display:flex;justify-content:space-between;align-items:flex-end;width:100%; }
+.page-header-right { font-size:.82rem;color:rgba(245,242,237,.4);max-width:280px;line-height:1.6;text-align:right; }
+
+.srv-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:rgba(255,255,255,.06); }
+.srv { background:var(--ink);padding:26px 24px 22px;position:relative;overflow:hidden;cursor:pointer;transition:background .3s; }
+.srv::after { content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--accent);transition:width .4s; }
+.srv:hover { background:#141414; }
+.srv:hover::after { width:100%; }
+.srv::before { content:'';position:absolute;top:-100%;left:-60%;width:40%;height:300%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.04) 50%,transparent 60%);transition:left .5s ease; }
+.srv:hover::before { left:150%; }
+
+.srv-icon-wrap {
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(200,169,110,.1);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;color:var(--accent);
+  transition:background .3s,transform .35s;
+}
+.srv:hover .srv-icon-wrap { background:rgba(200,169,110,.2);transform:rotate(6deg) scale(1.08); }
+
+.srv h3 { font-family:'DM Serif Display',serif;font-size:1.08rem;color:#fff;margin-bottom:6px;line-height:1.25; }
+.srv .srv-short { font-size:.81rem;color:rgba(245,242,237,.48);line-height:1.6; }
+.srv-plus { position:absolute;top:22px;right:22px;width:22px;height:22px;border:1px solid rgba(200,169,110,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--accent);opacity:.5;transition:transform .4s,opacity .3s,border-color .3s; }
+.srv:hover .srv-plus { opacity:1;border-color:rgba(200,169,110,.7); }
+.srv.open .srv-plus { transform:rotate(45deg); }
+.srv-more { max-height:0;overflow:hidden;transition:max-height .45s ease,opacity .35s;opacity:0; }
+.srv.open .srv-more { max-height:120px;opacity:1; }
+.srv-more-inner { padding-top:12px;border-top:1px solid rgba(255,255,255,.07);margin-top:12px;font-size:.79rem;color:rgba(245,242,237,.35);line-height:1.68; }
+
+@media(max-width:900px) { .srv-grid{grid-template-columns:1fr 1fr;} body,html{overflow:auto;height:auto;} .page{height:auto;min-height:100vh;overflow:auto;padding-bottom:60px;} .page-header{flex-direction:column;gap:8px;} .page-header-right{text-align:left;} }
+@media(max-width:600px) { .srv-grid{grid-template-columns:1fr;} }
+
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="overlay"></div>
+<div id="toast">✓ Hvala! Javit ćemo vam se uskoro.</div>
+<nav><a href="index.html" class="nav-logo" data-page><b>KR-IL</b> Epoxy Podovi</a><ul class="nav-links"><li><a href="index.html" class="" data-page>Početna</a></li><li><a href="usluge.html" class="act" data-page>Usluge</a></li><li><a href="zastomi.html" class="" data-page>Zašto mi</a></li><li><a href="proces.html" class="" data-page>Proces</a></li><li><a href="materijali.html" class="" data-page>Materijali</a></li><li><a href="kontakt.html" class="nav-cta" data-page><span>Kontakt</span></a></li></ul></nav>
+<div id="side-nav"><div class="sn-dot" data-label="Početna" onclick="navigate('index.html')"></div><div class="sn-dot act" data-label="Usluge" onclick="navigate('usluge.html')"></div><div class="sn-dot" data-label="Zašto mi" onclick="navigate('zastomi.html')"></div><div class="sn-dot" data-label="Proces" onclick="navigate('proces.html')"></div><div class="sn-dot" data-label="Materijali" onclick="navigate('materijali.html')"></div><div class="sn-dot" data-label="Kontakt" onclick="navigate('kontakt.html')"></div></div>
+
+<div class="page">
+  <div class="page-header fade-up">
+    <div>
+      <div class="eyebrow" style="color:var(--accent)">Naše usluge</div>
+      <h2 class="sec-title" style="color:#fff">Što radimo i <em>kako to radimo</em></h2>
+    </div>
+    <p class="page-header-right">Kliknite na uslugu za više informacija. Svaki sustav prilagođavamo specifičnim zahtjevima prostora i korisnika.</p>
+  </div>
+  <div class="srv-grid fade-up d1">
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="14" width="24" height="12" rx="1"/><path d="M2 14l6-8h12l6 8"/><path d="M10 26V18h8v8"/><path d="M6 14v-2"/><path d="M22 14v-2"/><path d="M14 14v-2"/>
+  </svg></div>
+      <h3>Industrijski Epoxy Podovi</h3>
+      <p class="srv-short">Visokootporni podni sustavi za tvornice, skladišta, logistička središta i teška radna okruženja.</p>
+      <div class="srv-more"><div class="srv-more-inner">Sustavi otporni na kemikalije, mehanička oštećenja, udarce viličarima i visoke toplinske promjene. Certificirani za HACCP i ESD okruženja. Debljina nanosa od 2 do 9 mm ovisno o opterećenju.</div></div>
+    </div>
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="4" width="20" height="22" rx="1"/><path d="M4 10h20"/><path d="M10 10V4"/><path d="M18 10V4"/><rect x="10" y="16" width="8" height="10"/>
+  </svg></div>
+      <h3>Poslovni i Komercijalni Prostori</h3>
+      <p class="srv-short">Elegantni epoxy podovi za urede, showroome, maloprodaju i ugostiteljstvo koji ostavljaju trajan dojam.</p>
+      <div class="srv-more"><div class="srv-more-inner">Bezšavna površina dostupna u stotinama nijansi i završnih obrada — mat, polu-sjaj ili sjaj. Idealno za brendirane prostore koji zahtijevaju visoku razinu estetike uz jednostavno održavanje.</div></div>
+    </div>
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 13L14 3l11 10"/><path d="M6 11v13h6v-7h4v7h6V11"/>
+  </svg></div>
+      <h3>Stambeni Prostori</h3>
+      <p class="srv-short">Moderni, higijenski epoxy podovi za garaže, podrume, wellness prostore i moderne stanove.</p>
+      <div class="srv-more"><div class="srv-more-inner">Otporni na vlagu, mrlje i habanje — prilagođeni uvjetima stambene upotrebe. Bezšavna površina bez spojeva gdje se skuplja prašina i bakterije. Dostupno i u antislip izvedbama.</div></div>
+    </div>
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="14" cy="14" r="4"/><path d="M14 2v4M14 22v4M2 14h4M22 14h4"/><path d="M5.6 5.6l2.8 2.8M19.6 19.6l2.8 2.8M5.6 22.4l2.8-2.8M19.6 8.4l2.8-2.8"/>
+  </svg></div>
+      <h3>Priprema i Sanacija Podloge</h3>
+      <p class="srv-short">Dijamantno brušenje, injektiranje pukotina, izravnavanje i primerjeri — temelj svake trajne obloge.</p>
+      <div class="srv-more"><div class="srv-more-inner">Pravilna priprema je odlučujuća za adheziju i vijek trajanja. Provodimo vlažnosne testove, mjerenje čvrstoće betona i analizu podloge prije svake aplikacije. Bez kompromisa na ovom koraku.</div></div>
+    </div>
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 24L14 4l10 20"/><path d="M7.5 17h13"/><circle cx="14" cy="4" r="1.5" fill="currentColor" stroke="none"/>
+  </svg></div>
+      <h3>Dekorativni Podni Sustavi</h3>
+      <p class="srv-short">Metallic epoxy, flake sustavi, betonski look i 3D efekti za prostore koji zahtijevaju distinktivan vizualni identitet.</p>
+      <div class="srv-more"><div class="srv-more-inner">Svaki dekorativni pod jedinstven je i neponovljiv — metallic pigmenti stvaraju dubinske, trodimenzionalne uzorke. Moguća potpuna prilagodba prema korporativnim bojama i arhitektonskim zahtjevima.</div></div>
+    </div>
+
+    <div class="srv" onclick="this.classList.toggle('open')">
+      <span class="srv-plus">+</span>
+      <div class="srv-icon-wrap"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2l10 4v9c0 5.5-4.5 10-10 11C8.5 25 4 20.5 4 15V6l10-4z"/><path d="M10 14l3 3 5-5"/>
+  </svg></div>
+      <h3>Zaštitni Premazi i Obnova</h3>
+      <p class="srv-short">Poliuretanski i epoxy zaštitni premazi za obnovu i zaštitu postojećih betonskih i epoxy podova.</p>
+      <div class="srv-more"><div class="srv-more-inner">Produžite vijek trajanja poda za 10 do 15 godina bez kompletne zamjene. Premazi štite od UV degradacije, kemijskih agensa i intenzivnog prometnog opterećenja uz minimalan zastoj u poslovanju.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── CURSOR ──
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'; });
+(function ar(){ rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar); })();
+document.querySelectorAll('a,button,[data-hover]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));
+});
+document.addEventListener('mousedown',()=>document.body.classList.add('cc'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('cc'));
+
+// ── PAGE TRANSITION ──
+const overlay = document.getElementById('overlay');
+function navigateTo(href) {
+  overlay.className = 'out';
+  setTimeout(()=>{
+    overlay.className = 'in';
+    setTimeout(()=>{ window.location.href = href; }, 10);
+  }, 560);
+}
+document.querySelectorAll('a[data-page]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    navigateTo(a.getAttribute('href'));
+  });
+});
+
+// ── RIPPLE ──
+document.querySelectorAll('.btn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    const r=document.createElement('span');r.className='rpl';
+    const rc=btn.getBoundingClientRect(),sz=Math.max(rc.width,rc.height);
+    r.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-rc.left-sz/2}px;top:${e.clientY-rc.top-sz/2}px;`;
+    btn.appendChild(r);setTimeout(()=>r.remove(),700);
+  });
+});
+
+// ── MAGNETIC ──
+document.querySelectorAll('.mag').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    btn.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.22}px,${(e.clientY-r.top-r.height/2)*.22}px)`;
+  });
+  btn.addEventListener('mouseleave',()=>{
+    btn.style.transition='transform .4s ease';btn.style.transform='';
+    setTimeout(()=>btn.style.transition='',400);
+  });
+});
+
+// ── COUNTER ──
+function runCounter(el){
+  const tgt=parseInt(el.dataset.count),sfx=el.dataset.sfx||'';
+  const dur=1600,t0=performance.now();
+  (function tick(now){
+    const p=Math.min((now-t0)/dur,1),ease=1-Math.pow(1-p,3);
+    const v=Math.floor(ease*tgt);
+    el.textContent=(tgt>=1000?v.toLocaleString('hr'):v)+sfx;
+    if(p<1)requestAnimationFrame(tick);
+    else el.textContent=(tgt>=1000?tgt.toLocaleString('hr'):tgt)+sfx;
+  })(t0);
+}
+document.querySelectorAll('[data-count]').forEach(el=>{
+  const obs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){runCounter(el);obs.disconnect();}
+  },{threshold:.3});
+  obs.observe(el);
+});
+
+// ── 3D TILT ──
+document.querySelectorAll('[data-tilt]').forEach(t=>{
+  t.addEventListener('mousemove',e=>{
+    const r=t.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    t.style.transform=`perspective(600px) rotateY(${x*16}deg) rotateX(${-y*16}deg) scale(1.04)`;
+  });
+  t.addEventListener('mouseleave',()=>t.style.transform='');
+});
+
+function navigate(href){ navigateTo(href); }
+
+</script>
+</body>
+</html>
